@@ -152,8 +152,6 @@ const ReactMapboxFactory = ({
       onStyleLoad: (map: MapboxGl.Map, evt: any) => null,
       center: defaultCenter,
       zoom: defaultZoom,
-      minZoom: 0,
-      maxZoom: 0,
       bearing: 0,
       movingMethod: defaultMovingMethod,
       pitch: 0,
