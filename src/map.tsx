@@ -47,6 +47,8 @@ export interface Props {
   style: string | MapboxGl.Style;
   center?: [number, number];
   zoom?: [number];
+  minZoom?: number;
+  maxZoom?: number;
   maxBounds?: MapboxGl.LngLatBounds | FitBounds;
   fitBounds?: FitBounds;
   fitBoundsOptions?: FitBoundsOptions;
@@ -185,7 +187,9 @@ const ReactMapboxFactory = ({
         fitBounds,
         fitBoundsOptions,
         bearing,
-        maxBounds
+        maxBounds,
+        minZoom: minZoomProp,
+        maxZoom: maxZoomProp
       } = this.props;
 
       // tslint:disable-next-line:no-any
@@ -205,8 +209,8 @@ const ReactMapboxFactory = ({
         preserveDrawingBuffer,
         hash,
         zoom: zoom[0],
-        minZoom,
-        maxZoom,
+        minZoom: minZoomProp || minZoom,
+        maxZoom: maxZoomProp || maxZoom,
         maxBounds,
         container: this.container!,
         center:
@@ -296,6 +300,8 @@ const ReactMapboxFactory = ({
       const zoom = map.getZoom();
       const bearing = map.getBearing();
       const pitch = map.getPitch();
+      const currentMinZoom = map.getMinZoom();
+      const currentMaxZoom = map.getMaxZoom();
 
       const didZoomUpdate =
         this.props.zoom !== nextProps.zoom &&
@@ -313,6 +319,14 @@ const ReactMapboxFactory = ({
       const didPitchUpdate =
         this.props.pitch !== nextProps.pitch &&
         (nextProps.pitch && nextProps.pitch[0]) !== pitch;
+
+      const didMinZoomUpdate =
+        this.props.minZoom !== nextProps.minZoom &&
+        nextProps.minZoom !== currentMinZoom;
+
+      const didMaxZoomUpdate =
+        this.props.maxZoom !== nextProps.maxZoom &&
+        nextProps.maxZoom !== currentMaxZoom;
 
       if (nextProps.maxBounds) {
         const didMaxBoundsUpdate = this.props.maxBounds !== nextProps.maxBounds;
@@ -363,6 +377,14 @@ const ReactMapboxFactory = ({
 
       if (!isEqual(this.props.style, nextProps.style)) {
         map.setStyle(nextProps.style);
+      }
+
+      if (didMinZoomUpdate) {
+        map.setMinZoom(nextProps.minZoom);
+      }
+
+      if (didMaxZoomUpdate) {
+        map.setMaxZoom(nextProps.maxZoom);
       }
 
       return null;
