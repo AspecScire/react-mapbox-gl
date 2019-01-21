@@ -26,6 +26,8 @@ describe('Map', () => {
       getCenter: jest.fn(() => ({ lng: 1, lat: 2 })),
       getZoom: jest.fn(() => 2),
       getBearing: jest.fn(),
+      getMinZoom: jest.fn(),
+      getMaxZoom: jest.fn(),
       getPitch: jest.fn()
     };
   });
