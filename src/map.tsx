@@ -47,6 +47,8 @@ export interface Props {
   style: string | MapboxGl.Style;
   center?: [number, number];
   zoom?: [number];
+  minZoom?: number;
+  maxZoom?: number;
   maxBounds?: MapboxGl.LngLatBounds | FitBounds;
   fitBounds?: FitBounds;
   fitBoundsOptions?: FitBoundsOptions;
@@ -150,6 +152,8 @@ const ReactMapboxFactory = ({
       onStyleLoad: (map: MapboxGl.Map, evt: any) => null,
       center: defaultCenter,
       zoom: defaultZoom,
+      minZoom: 0,
+      maxZoom: 0,
       bearing: 0,
       movingMethod: defaultMovingMethod,
       pitch: 0,
@@ -185,7 +189,9 @@ const ReactMapboxFactory = ({
         fitBounds,
         fitBoundsOptions,
         bearing,
-        maxBounds
+        maxBounds,
+        minZoom: minZoomProp,
+        maxZoom: maxZoomProp,
       } = this.props;
 
       // tslint:disable-next-line:no-any
@@ -205,7 +211,8 @@ const ReactMapboxFactory = ({
         preserveDrawingBuffer,
         hash,
         zoom: zoom[0],
-        minZoom,
+        minZoom: minZoomProp | minZoom,
+        maxZoom: maxZoomProp | maxZoom,
         maxZoom,
         maxBounds,
         container: this.container!,
@@ -296,6 +303,8 @@ const ReactMapboxFactory = ({
       const zoom = map.getZoom();
       const bearing = map.getBearing();
       const pitch = map.getPitch();
+      const minZoom = map.getMinZoom();
+      const maxZoom = map.getMaxZoom();
 
       const didZoomUpdate =
         this.props.zoom !== nextProps.zoom &&
@@ -313,6 +322,14 @@ const ReactMapboxFactory = ({
       const didPitchUpdate =
         this.props.pitch !== nextProps.pitch &&
         (nextProps.pitch && nextProps.pitch[0]) !== pitch;
+
+      const didMinZoomUpdate =
+        this.props.minZoom !== nextProps.minZoom &&
+        nextProps.minZoom !== minZoom;
+
+      const didMaxZoomUpdate =
+        this.props.maxZoom !== nextProps.maxZoom &&
+        nextProps.maxZoom !== maxZoom;
 
       if (nextProps.maxBounds) {
         const didMaxBoundsUpdate = this.props.maxBounds !== nextProps.maxBounds;
@@ -363,6 +380,14 @@ const ReactMapboxFactory = ({
 
       if (!isEqual(this.props.style, nextProps.style)) {
         map.setStyle(nextProps.style);
+      }
+
+      if (didMinZoomUpdate) {
+        map.setMinZoom(nextProps.minZoom);
+      }
+
+      if (didMaxZoomUpdate) {
+        map.setMaxZoom(nextProps.maxZoom);
       }
 
       return null;
