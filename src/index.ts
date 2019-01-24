@@ -28,7 +28,8 @@ export {
   Source,
   Cluster,
   RotationControl,
-  Image
+  Image,
+  withMap
 };
 
 export default Map;
